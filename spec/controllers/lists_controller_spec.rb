@@ -73,28 +73,67 @@ RSpec.describe ListsController, type: :controller do
 
   describe 'POST create' do
     it 'returns HTTP redirect on success' do
+      post :create, params: {user_id: @user.id, list: {name: 'list1'} }
+      expect(response).to have_http_status(:redirect)
     end
     
     it 'set list instance variable' do
+      name = 'test1'
+      post :create, params: { list: {name: name} }
+
+      expect(assigns(:list).name).to eq(name)
     end
 
-    it 'redirects to list path is save successfull' do
+    it 'redirects to list path if save successfull' do
+      
+      post :create, params: {user_id: @user.id, list: {name: 'list1'} }
+      list = assigns(:list)
+      
+      expect(response).to redirect_to(list_path(list))
     end
     
-    it 'renders new template is save is unsuccessful' do 
+    it 'renders new template if save is unsuccessful' do 
+      post :create, params: { list: {name: ''} }
+      list = assigns(:list)
+      
+      expect(response).to render_template(:new)
     end
 
     it 'saved list to the database' do
+      post :create, params: {user_id: @user.id, list: {name: 'list1'} }
+      list = assigns(:list)
+
+      expect(@user.lists.first.name).to eq('list1')
     end
     
-
-
-    
-
-
-
   end
   
+  describe 'GET #edit' do
+    it 'return http success' do
+      list = @user.lists.create(name: 'list1')
+      get :edit, params: { id: list.id }
+      expect(response).to have_http_status(:success)
+    end
+
+    it 'renders edit template' do
+      list = @user.lists.create(name: 'list1')
+      get :edit, params: { id: list.id}
+
+      expect(response).to render_template(:edit)
+    end
+
+    it 'sets the list instance variable' do
+      list = @user.lists.create(name: 'list1')
+      get :edit, params: { id: list.id}
+
+      expect(@user.lists.first.name).to eq('list1')
+    end
+        
+  end
+
+
+  
+
   
 
 

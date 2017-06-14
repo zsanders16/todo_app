@@ -33,6 +33,7 @@ group :test do
   gem 'database_cleaner'
   gem 'rails-controller-testing'
   gem 'simplecov'
+  gem 'factory_girl'
 end
 
 group :development do
